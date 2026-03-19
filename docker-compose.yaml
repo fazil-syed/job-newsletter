@@ -9,10 +9,8 @@ services:
   db:
     image: postgres:15
     restart: always
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: newsletter
+    env_file:
+      - .env
     ports:
       - "5433:5432"
     volumes:
@@ -20,3 +18,5 @@ services:
 
 volumes:
   postgres_data:
+    
+   :a

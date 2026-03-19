@@ -7,7 +7,7 @@ vendor/
 
 # env / config secrets
 config.yaml
-
+.env
 # docker
 *.log
 
