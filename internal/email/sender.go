@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"regexp"
 
 	"jobs-newsletter/internal/config"
 	"jobs-newsletter/internal/db"
@@ -52,22 +54,20 @@ func SendNewsletter(cfg config.ResendConfig, content string) error {
 }
 func BuildEmailContent(cfg config.AppConfig, post db.Post, email string) string {
 	baseURL := cfg.BASEUrl
+	content := WrapLinks(baseURL, post.Content, email, post.ID)
 	trackingPixel := fmt.Sprintf(
 		`<img src="%s/open?email=%s&post_id=%d" width="1" height="1"/>`,
 		baseURL, email, post.ID,
 	)
 
-	// example: wrap links manually for now
-	content := post.Content
-
 	// append unsubscribe + pixel
-	content += fmt.Sprintf(`
+	unsub := fmt.Sprintf(`
 		<br/><br/>
 		<a href="%s/unsubscribe?email=%s">Unsubscribe</a>
 		%s
 	`, baseURL, email, trackingPixel)
 
-	return content
+	return content + "<br><br>" + unsub + trackingPixel
 }
 func SendPost(cfg *config.Config, post db.Post) {
 	var subs []db.Subscriber
@@ -92,4 +92,30 @@ func SendPost(cfg *config.Config, post db.Post) {
 		client := &http.Client{}
 		client.Do(req)
 	}
+}
+
+func WrapLinks(baseURL, content, email string, postID uint) string {
+	re := regexp.MustCompile(`href="([^"]+)"`)
+
+	return re.ReplaceAllStringFunc(content, func(match string) string {
+		// extract original URL
+		submatches := re.FindStringSubmatch(match)
+		if len(submatches) < 2 {
+			return match
+		}
+
+		original := submatches[1]
+
+		encoded := url.QueryEscape(original)
+
+		newURL := fmt.Sprintf(
+			`href="%s/click?email=%s&post_id=%d&url=%s"`,
+			baseURL,
+			email,
+			postID,
+			encoded,
+		)
+
+		return newURL
+	})
 }
