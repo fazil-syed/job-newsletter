@@ -69,7 +69,7 @@ func BuildEmailContent(cfg config.AppConfig, post db.Post, email string) string 
 
 	return content
 }
-func SendPost(cfg config.Config, post db.Post) {
+func SendPost(cfg *config.Config, post db.Post) {
 	var subs []db.Subscriber
 	db.DB.Find(&subs)
 
