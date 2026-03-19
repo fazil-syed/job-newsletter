@@ -1,0 +1,16 @@
+server:
+  port: <PORT>
+
+postgres:
+  host: <DB_HOST>
+  port: <DB_POST>
+  user: <DB_USER>
+  password: <DB_PASSWORD>
+  dbname: <DB_NAME>
+  sslmode: <SSLMODE>
+
+resend:
+  api_key: "resend_api_key"
+  from_email: "from_email"
+app:
+  api_key : "app_secret_api_key"

@@ -1,0 +1,19 @@
+# binaries
+app
+*.exe
+
+# go
+vendor/
+
+# env / config secrets
+config.yaml
+
+# docker
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
