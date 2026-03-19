@@ -46,7 +46,7 @@ func main() {
 	http.HandleFunc("/unsubscribe", api.UnsubscribeHandler)
 	http.HandleFunc("/open", api.OpenHandler)
 	http.HandleFunc("/click", api.ClickHandler)
-	http.HandleFunc("/post", AuthMiddleware(api.CreatePostHandler(cfg.Resend), cfg.App.APIKey))
+	http.HandleFunc("/post", AuthMiddleware(api.CreatePostHandler(cfg), cfg.App.APIKey))
 	log.Printf("server running on :%d", port)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }

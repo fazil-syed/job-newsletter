@@ -14,7 +14,7 @@ type CreatePostRequest struct {
 	Content string `json:"content"`
 }
 
-func CreatePostHandler(cfg config.ResendConfig) http.HandlerFunc {
+func CreatePostHandler(cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req CreatePostRequest
 		err := json.NewDecoder(r.Body).Decode(&req)

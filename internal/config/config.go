@@ -7,7 +7,8 @@ type Config struct {
 	App      AppConfig      `mapstructure:"app"`
 }
 type AppConfig struct {
-	APIKey string `mapstructure:"api_key"`
+	APIKey  string `mapstructure:"api_key"`
+	BASEUrl string `mapstructure:"base_url"`
 }
 
 type ServerConfig struct {
