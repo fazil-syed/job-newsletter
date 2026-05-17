@@ -61,13 +61,13 @@ func BuildEmailContent(cfg config.AppConfig, post db.Post, email string) string 
 	)
 
 	// append unsubscribe + pixel
-	unsub := fmt.Sprintf(`
-		<br/><br/>
-		<a href="%s/unsubscribe?email=%s">Unsubscribe</a>
-		%s
-	`, baseURL, email, trackingPixel)
+	// unsub := fmt.Sprintf(`
+	// 	<br/><br/>
+	// 	<a href="%s/unsubscribe?email=%s">Unsubscribe</a>
+	// 	%s
+	// `, baseURL, email, trackingPixel)
 
-	return content + "<br><br>" + unsub + trackingPixel
+	return content + "<br><br>" + trackingPixel
 }
 func SendPost(cfg *config.Config, post db.Post) {
 	var subs []db.Subscriber
