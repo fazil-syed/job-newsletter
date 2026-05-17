@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 
 	"jobs-newsletter/internal/config"
 	"jobs-newsletter/internal/db"
@@ -60,13 +61,7 @@ func BuildEmailContent(cfg config.AppConfig, post db.Post, email string) string 
 		baseURL, email, post.ID,
 	)
 
-	// append unsubscribe + pixel
-	// unsub := fmt.Sprintf(`
-	// 	<br/><br/>
-	// 	<a href="%s/unsubscribe?email=%s">Unsubscribe</a>
-	// 	%s
-	// `, baseURL, email, trackingPixel)
-
+	content = strings.ReplaceAll(content, "UNSUBSCRIBE_PLACEHOLDER", fmt.Sprintf("%s/unsubscribe?email=%s", baseURL, email))
 	return content + "<br><br>" + trackingPixel
 }
 func SendPost(cfg *config.Config, post db.Post) {
