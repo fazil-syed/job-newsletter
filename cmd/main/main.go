@@ -5,6 +5,7 @@ import (
 	"jobs-newsletter/internal/api"
 	"jobs-newsletter/internal/config"
 	"jobs-newsletter/internal/db"
+	"jobs-newsletter/static"
 	"log"
 	"net/http"
 )
@@ -21,6 +22,7 @@ func AuthMiddleware(next http.HandlerFunc, apiKey string) http.HandlerFunc {
 		next(w, r)
 	}
 }
+
 func main() {
 	cfg, err := config.LoadConfig(".")
 	if err != nil {
@@ -29,18 +31,14 @@ func main() {
 	db.Init(cfg.Postgres)
 	db.DB.AutoMigrate(&db.Subscriber{}, &db.Post{}, &db.Event{})
 	port := cfg.Server.Port
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
-		w.Write([]byte(`
-		<h2>Remote SWE Jobs (High Paying Only)</h2>
-		<form method="POST" action="/subscribe">
-			<input name="email" placeholder="Enter email" required />
-			<button type="submit">Subscribe</button>
-		</form>
-	`))
-	})
+
+	fs := http.FileServer(http.FS(static.StaticFiles))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
+	})
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/index.html")
 	})
 	http.HandleFunc("/subscribe", api.SubscribeHandler)
 	http.HandleFunc("/unsubscribe", api.UnsubscribeHandler)

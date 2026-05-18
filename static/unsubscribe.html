@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unsubscribe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 8px;
+            color: #111;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 24px;
+        }
+
+        .email {
+            font-weight: bold;
+            color: #111;
+        }
+
+        .btn-confirm {
+            background: #dc2626;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #111;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>Unsubscribe</h2>
+        <p>Are you sure you want to unsubscribe <span class="email" id="email-display"></span> from the jobs newsletter?
+        </p>
+        <button class="btn-confirm" onclick="confirmUnsubscribe()">Yes, unsubscribe me</button>
+        <button class="btn-cancel" onclick="window.location.href = '/'">Cancel</button>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get("email");
+
+        if (!email) {
+            document.querySelector("p").textContent = "Invalid unsubscribe link.";
+        } else {
+            document.getElementById("email-display").textContent = email;
+        }
+
+        async function confirmUnsubscribe() {
+            if (!email) return;
+            const res = await fetch(`/unsubscribe?email=${email}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                // body: JSON.stringify({ email })
+            });
+            if (res.ok) {
+                window.location.href = "/unsubscribed.html";
+            } else {
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    </script>
+</body>
+
+</html>

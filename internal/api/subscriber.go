@@ -39,17 +39,29 @@ func SubscribeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("subscribed successfully"))
+	http.ServeFile(w, r, "./static/subscribed.html")
 }
 func UnsubscribeHandler(w http.ResponseWriter, r *http.Request) {
-	email := r.URL.Query().Get("email")
-
-	if email == "" {
-		http.Error(w, "missing email", http.StatusBadRequest)
+	switch r.Method {
+	case http.MethodGet:
+		http.ServeFile(w, r, "./static/unsubscribe.html")
 		return
+	case http.MethodPost:
+
+		email := r.URL.Query().Get("email")
+
+		if email == "" {
+			http.Error(w, "missing email", http.StatusBadRequest)
+			return
+		}
+
+		db.DB.Where("email = ?", email).Delete(&db.Subscriber{})
+
+		http.ServeFile(w, r, "./static/unsubscribed.html")
+		// w.Write([]byte("You have been unsubscribed"))
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+
 	}
-
-	db.DB.Where("email = ?", email).Delete(&db.Subscriber{})
-
-	w.Write([]byte("You have been unsubscribed"))
 }
