@@ -32,11 +32,6 @@ func main() {
 	db.DB.AutoMigrate(&db.Subscriber{}, &db.Post{}, &db.Event{})
 	port := cfg.Server.Port
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// http.Handle("/", fs)
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
 	})

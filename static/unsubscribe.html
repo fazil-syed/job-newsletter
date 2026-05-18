@@ -6,39 +6,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Unsubscribe</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            background: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            padding: 24px;
         }
 
         .card {
-            background: #fff;
+            background: #1e293b;
+            border: 1px solid #334155;
             padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
             max-width: 420px;
             width: 100%;
             text-align: center;
         }
 
+        .icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
         h2 {
-            margin-bottom: 8px;
-            color: #111;
+            font-size: 24px;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 12px;
         }
 
         p {
-            color: #555;
-            margin-bottom: 24px;
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.7;
+            margin-bottom: 32px;
         }
 
         .email {
-            font-weight: bold;
-            color: #111;
+            font-weight: 700;
+            color: #38bdf8;
         }
 
         .btn-confirm {
@@ -46,26 +62,38 @@
             color: #fff;
             border: none;
             padding: 12px 24px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
             margin-right: 8px;
         }
 
+        .btn-confirm:hover {
+            background: #b91c1c;
+        }
+
         .btn-cancel {
-            background: #f3f4f6;
-            color: #111;
-            border: none;
+            background: #0f172a;
+            color: #94a3b8;
+            border: 1px solid #334155;
             padding: 12px 24px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+        }
+
+        .btn-cancel:hover {
+            background: #334155;
+            color: #f1f5f9;
         }
     </style>
 </head>
 
 <body>
     <div class="card">
+        <div class="icon">😢</div>
         <h2>Unsubscribe</h2>
         <p>Are you sure you want to unsubscribe <span class="email" id="email-display"></span> from the jobs newsletter?
         </p>
@@ -76,19 +104,16 @@
     <script>
         const params = new URLSearchParams(window.location.search);
         const email = params.get("email");
-
         if (!email) {
             document.querySelector("p").textContent = "Invalid unsubscribe link.";
         } else {
             document.getElementById("email-display").textContent = email;
         }
-
         async function confirmUnsubscribe() {
             if (!email) return;
             const res = await fetch(`/unsubscribe?email=${email}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // body: JSON.stringify({ email })
             });
             if (res.ok) {
                 window.location.href = "/unsubscribed.html";
