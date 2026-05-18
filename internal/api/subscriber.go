@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"jobs-newsletter/internal/db"
+	"jobs-newsletter/internal/utils"
 )
 
 type SubscribeRequest struct {
@@ -38,13 +39,12 @@ func SubscribeHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("already subscribed"))
 		return
 	}
-
-	http.ServeFile(w, r, "./static/subscribed.html")
+	utils.RenderHTML(w, "subscribed.html")
 }
 func UnsubscribeHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		http.ServeFile(w, r, "./static/unsubscribe.html")
+		utils.RenderHTML(w, "unsubscribe.html")
 		return
 	case http.MethodPost:
 
@@ -57,7 +57,8 @@ func UnsubscribeHandler(w http.ResponseWriter, r *http.Request) {
 
 		db.DB.Where("email = ?", email).Delete(&db.Subscriber{})
 
-		http.ServeFile(w, r, "./static/unsubscribed.html")
+		utils.RenderHTML(w, "unsubscribed.html")
+
 		// w.Write([]byte("You have been unsubscribed"))
 
 	default:
