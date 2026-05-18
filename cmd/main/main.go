@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"jobs-newsletter/internal/api"
 	"jobs-newsletter/internal/config"
 	"jobs-newsletter/internal/db"
-	"jobs-newsletter/internal/utils"
+	"jobs-newsletter/static"
 	"log"
 	"net/http"
 )
@@ -32,12 +33,20 @@ func main() {
 	db.DB.AutoMigrate(&db.Subscriber{}, &db.Post{}, &db.Event{})
 	port := cfg.Server.Port
 
+	staticFS, err := fs.Sub(static.StaticFiles, ".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fs := http.FileServer(http.FS(staticFS))
+
+	http.Handle("/", fs)
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
 	})
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		utils.RenderHTML(w, "index.html")
-	})
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "./static/index.html")
+	// })
 	http.HandleFunc("/subscribe", api.SubscribeHandler)
 	http.HandleFunc("/unsubscribe", api.UnsubscribeHandler)
 	http.HandleFunc("/open", api.OpenHandler)
